@@ -1,0 +1,7 @@
+main: me.rafael5gr2.ajleaderboardsextension.AjLeaderboardsExtension
+name: ajLeaderboardsExtension
+version: ${pluginVersion}
+description: ${pluginDescription}
+api-version: 1.19
+authors: [ rafael5gr2 ]
+depend:  [ ajLeaderboards ]

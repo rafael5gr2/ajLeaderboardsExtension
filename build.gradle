@@ -1,0 +1,60 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+}
+
+group 'me.rafael5gr2.ajleaderboardsextension'
+def pluginVersion = '1.0.0'
+def pluginDescription = 'This plugin extends the capabilities of ajLeaderboards.'
+version = pluginVersion
+
+compileJava {
+    sourceCompatibility = 17
+    targetCompatibility = 17
+    options.encoding = 'UTF-8'
+    options.compilerArgs << '-Xlint:deprecation' << '-Xlint:unchecked'
+    dependsOn clean
+}
+
+build {
+    dependsOn shadowJar
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven { url 'https://papermc.io/repo/repository/maven-public/' }
+    maven { url = 'https://repo.ajg0702.us/releases' }
+}
+
+dependencies {
+    compileOnly 'io.papermc.paper:paper-api:1.19.2-R0.1-SNAPSHOT'
+    compileOnly 'us.ajg0702:ajLeaderboards:2.6.0'
+    implementation 'org.spongepowered:configurate-yaml:4.1.2'
+    implementation 'cloud.commandframework:cloud-paper:1.7.1'
+}
+
+shadowJar {
+    archiveClassifier.set('')
+
+    relocate 'org.yaml.snakeyaml', 'me.rafael5gr2.ajleaderboardsextension.libs.org.yaml.snakeyaml'
+    relocate 'org.spongepowered.configurate', 'me.rafael5gr2.ajleaderboardsextension.libs.org.spongepowered.configurate'
+    relocate 'io.leangen.geantyref', 'me.rafael5gr2.ajleaderboardsextension.libs.io.leangen.geantyref'
+    relocate 'cloud.commandframework', 'me.rafael5gr2.ajleaderboardsextension.libs.cloud.commandframework'
+
+    exclude 'META-INF/**'
+}
+
+processResources {
+    filesMatching('plugin.yml') {
+        expand(
+                pluginVersion: pluginVersion,
+                pluginDescription: pluginDescription
+        )
+    }
+}
