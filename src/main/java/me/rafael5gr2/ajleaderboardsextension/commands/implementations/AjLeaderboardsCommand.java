@@ -1,4 +1,4 @@
-package me.rafael5gr2.ajleaderboardsextension.commands;
+package me.rafael5gr2.ajleaderboardsextension.commands.implementations;
 
 import cloud.commandframework.ArgumentDescription;
 import cloud.commandframework.Command;
@@ -8,6 +8,8 @@ import cloud.commandframework.context.CommandContext;
 import cloud.commandframework.paper.PaperCommandManager;
 
 import me.rafael5gr2.ajleaderboardsextension.AjLeaderboardsExtension;
+import me.rafael5gr2.ajleaderboardsextension.commands.AbstractCommand;
+import me.rafael5gr2.ajleaderboardsextension.commands.CommandManager;
 
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
@@ -17,6 +19,7 @@ import org.bukkit.command.CommandSender;
 
 import org.jetbrains.annotations.NotNull;
 
+import us.ajg0702.leaderboards.LeaderboardPlugin;
 import us.ajg0702.leaderboards.boards.StatEntry;
 import us.ajg0702.leaderboards.boards.TimedType;
 
@@ -24,19 +27,22 @@ public class AjLeaderboardsCommand extends AbstractCommand {
 
     public AjLeaderboardsCommand(
             final @NotNull AjLeaderboardsExtension plugin,
-            final @NotNull Commands commands,
+            final @NotNull LeaderboardPlugin ajLeaderboardsInstance,
+            final @NotNull CommandManager commandManager,
             final @NotNull PaperCommandManager<CommandSender> paperCommandManager
     ) {
-        super(plugin, commands, paperCommandManager);
+        super(plugin, ajLeaderboardsInstance, commandManager, paperCommandManager);
     }
 
     @Override
     public void register() {
 
-        final Command.Builder<CommandSender> commandBuilder = paperCommandManager.commandBuilder("ajleaderboardsextension", "ajlbe");
+        final Command.Builder<CommandSender> commandBuilder = paperCommandManager.commandBuilder("ajleaderboardsextension", "ajlbe")
+                .permission("ajleaderboardsextension.command");
 
-        this.commands.register(
+        this.commandManager.register(
                 commandBuilder.literal("find")
+                        .permission("ajleaderboardsextension.subcommand.find")
                         .argument(StringArgument.of("player"), ArgumentDescription.of("The player you want to find"))
                         .argument(StringArgument.of("board"), ArgumentDescription.of("The board name"))
                         .argument(StringArgument.of("type"), ArgumentDescription.of("The timed type to use"))
@@ -44,8 +50,9 @@ public class AjLeaderboardsCommand extends AbstractCommand {
         );
 
 
-        this.commands.register(
+        this.commandManager.register(
                 commandBuilder.literal("list")
+                        .permission("ajleaderboardsextension.subcommand.list")
                         .argument(StringArgument.of("board"), ArgumentDescription.of("The board name"))
                         .argument(StringArgument.of("type"), ArgumentDescription.of("The timed type to use"))
                         .argument(IntegerArgument.optional("page"), ArgumentDescription.of("The page number"))
@@ -63,7 +70,7 @@ public class AjLeaderboardsCommand extends AbstractCommand {
             return;
         }
         final String board = commandContext.get("board");
-        if (!this.plugin.getLeaderboardPluginInstance().getTopManager().boardExists(board)) {
+        if (!this.ajLeaderboardsInstance.getTopManager().boardExists(board)) {
             commandContext.getSender().sendMessage(
                     MiniMessage.miniMessage().deserialize("<red>Board does not exist!</red>")
             );
@@ -79,14 +86,14 @@ public class AjLeaderboardsCommand extends AbstractCommand {
             );
             return;
         }
-        final StatEntry playerStatEntry = this.plugin.getLeaderboardPluginInstance().getTopManager().getStatEntry(offlinePlayer, board, timedType);
+        final StatEntry playerStatEntry = this.ajLeaderboardsInstance.getTopManager().getStatEntry(offlinePlayer, board, timedType);
         final int position = playerStatEntry.getPosition();
         final int page = (position / 10) + 1;
         commandContext.getSender().sendMessage(
                 MiniMessage.miniMessage().deserialize("<color:#2980B9>-------------------- Page: " + page + " --------------------</color>")
         );
         for (int i = (((page - 1) * 10) + 1); i <= page * 10; i++) {
-            final StatEntry statEntry = this.plugin.getLeaderboardPluginInstance().getTopManager().getStat(i, board, timedType);
+            final StatEntry statEntry = this.ajLeaderboardsInstance.getTopManager().getStat(i, board, timedType);
             commandContext.getSender().sendMessage(
                     MiniMessage.miniMessage().deserialize(
                             "<color:#6DD5FA>" + i + ".</color> " + statEntry.getPrefix() + statEntry.getPlayerName() +
@@ -98,7 +105,7 @@ public class AjLeaderboardsCommand extends AbstractCommand {
 
     private void onList(final @NotNull CommandContext<CommandSender> commandContext) {
         final String board = commandContext.get("board");
-        if (!this.plugin.getLeaderboardPluginInstance().getTopManager().boardExists(board)) {
+        if (!this.ajLeaderboardsInstance.getTopManager().boardExists(board)) {
             commandContext.getSender().sendMessage(
                     MiniMessage.miniMessage().deserialize("<red>Board does not exist!</red>")
             );
@@ -137,7 +144,7 @@ public class AjLeaderboardsCommand extends AbstractCommand {
                 MiniMessage.miniMessage().deserialize("<color:#2980B9>-------------------- Page: " + page + " --------------------</color>")
         );
         for (int i = (((page - 1) * 10) + 1); i <= page * 10; i++) {
-            final StatEntry statEntry = this.plugin.getLeaderboardPluginInstance().getTopManager().getStat(i, board, timedType);
+            final StatEntry statEntry = this.ajLeaderboardsInstance.getTopManager().getStat(i, board, timedType);
             commandContext.getSender().sendMessage(
                     MiniMessage.miniMessage().deserialize(
                             "<color:#6DD5FA>" + i + ".</color> " + statEntry.getPrefix() + statEntry.getPlayerName() +

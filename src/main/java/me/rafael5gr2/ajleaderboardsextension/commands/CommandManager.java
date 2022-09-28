@@ -6,21 +6,27 @@ import cloud.commandframework.execution.CommandExecutionCoordinator;
 import cloud.commandframework.paper.PaperCommandManager;
 
 import me.rafael5gr2.ajleaderboardsextension.AjLeaderboardsExtension;
+import me.rafael5gr2.ajleaderboardsextension.commands.implementations.AjLeaderboardsCommand;
 
 import org.bukkit.command.CommandSender;
 
 import org.jetbrains.annotations.NotNull;
 
+import us.ajg0702.leaderboards.LeaderboardPlugin;
+
 import java.util.List;
 
-public class Commands {
+public class CommandManager {
 
     private final AjLeaderboardsExtension plugin;
+    private final LeaderboardPlugin ajLeaderboardsInstance;
     private final PaperCommandManager<CommandSender> paperCommandManager;
 
-    public Commands(final @NotNull AjLeaderboardsExtension plugin) throws Exception {
+    public CommandManager(final @NotNull AjLeaderboardsExtension plugin, final @NotNull LeaderboardPlugin ajLeaderboardsInstance) throws Exception {
 
         this.plugin = plugin;
+
+        this.ajLeaderboardsInstance = ajLeaderboardsInstance;
 
         this.paperCommandManager = PaperCommandManager.createNative(plugin, CommandExecutionCoordinator.simpleCoordinator());
 
@@ -39,7 +45,7 @@ public class Commands {
 
     public void registerCommands() {
         List.of(
-                new AjLeaderboardsCommand(this.plugin, this, this.paperCommandManager)
+                new AjLeaderboardsCommand(this.plugin, ajLeaderboardsInstance, this, this.paperCommandManager)
         ).forEach(AbstractCommand::register);
     }
 }
