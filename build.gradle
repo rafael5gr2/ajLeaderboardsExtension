@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'me.rafael5gr2.ajleaderboardsextension'
-def pluginVersion = '1.0.0'
+def pluginVersion = '1.0.1'
 def pluginDescription = 'This plugin extends the capabilities of ajLeaderboards.'
 version = pluginVersion
 
@@ -29,14 +29,14 @@ java {
 repositories {
     mavenCentral()
     maven { url 'https://papermc.io/repo/repository/maven-public/' }
-    maven { url = 'https://repo.ajg0702.us/releases' }
+    maven { url 'https://repo.ajg0702.us/releases' }
 }
 
 dependencies {
-    compileOnly 'io.papermc.paper:paper-api:1.19.2-R0.1-SNAPSHOT'
-    compileOnly 'us.ajg0702:ajLeaderboards:2.6.0'
+    compileOnly 'io.papermc.paper:paper-api:1.19.3-R0.1-SNAPSHOT'
+    compileOnly 'us.ajg0702:ajLeaderboards:2.6.7'
     //implementation 'org.spongepowered:configurate-yaml:4.1.2'
-    implementation 'cloud.commandframework:cloud-paper:1.7.1'
+    implementation 'cloud.commandframework:cloud-paper:1.8.0'
 }
 
 shadowJar {
